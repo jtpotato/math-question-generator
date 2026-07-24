@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exponent Questions</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: rgba(255, 255, 255, 0.84);
+      --text: #102033;
+      --muted: #5d6c7e;
+      --line: rgba(16, 32, 51, 0.12);
+      --accent: #146c80;
+      --shadow: 0 24px 60px rgba(16, 32, 51, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(20, 108, 128, 0.12), transparent 34%),
+        radial-gradient(circle at 85% 10%, rgba(240, 138, 36, 0.12), transparent 28%),
+        linear-gradient(135deg, #f4f7fb, #eef7f3);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(820px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      padding: clamp(20px, 4vw, 40px);
+    }
+
+    .question-wrap {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      padding: 24px 18px;
+      border-radius: 24px;
+      border: 1px dashed rgba(16, 32, 51, 0.18);
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .question {
+      text-align: center;
+      font-size: clamp(1.9rem, 4.5vw, 3.1rem);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.04em;
+    }
+
+    .question sup {
+      font-size: 0.68em;
+      top: -0.55em;
+    }
+
+    .button-row {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font: inherit;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), #0f8792);
+      box-shadow: 0 18px 28px rgba(20, 108, 128, 0.18);
+      cursor: pointer;
+      transition: transform 140ms ease, box-shadow 140ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .math {
+      white-space: nowrap;
+    }
+
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-width: 2.8em;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 1.1;
+    }
+
+    .fraction .top,
+    .fraction .bottom {
+      padding: 0.03em 0.14em;
+    }
+
+    .fraction .bar {
+      height: 2px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.75;
+      margin: 0.14em 0;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
+
+      .card {
+        border-radius: 22px;
+        padding: 20px;
+      }
+
+      .question-wrap {
+        min-height: 160px;
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="question-wrap">
+      <div class="question" id="question">Loading a question...</div>
+    </div>
+    <div class="button-row">
+      <button id="newQuestionBtn" type="button">New question</button>
+    </div>
+  </main>
+
+  <script>
+    const questionEl = document.getElementById('question');
+    const newQuestionBtn = document.getElementById('newQuestionBtn');
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function pick(list) {
+      return list[randInt(0, list.length - 1)];
+    }
+
+    function superscript(value) {
+      return `<sup>${value}</sup>`;
+    }
+
+    function exponentText(value) {
+      return value === 1 ? '' : superscript(value);
+    }
+
+    function fraction(numerator, denominator) {
+      return `
+        <span class="fraction math" aria-label="fraction">
+          <span class="top">${numerator}</span>
+          <span class="bar"></span>
+          <span class="bottom">${denominator}</span>
+        </span>
+      `;
+    }
+
+    function divisionQuestion() {
+      const numeratorExponent = randInt(3, 8);
+      const denominatorExponent = randInt(1, numeratorExponent - 1);
+      const coefficient = pick([1, 2, 3, 4, 6]);
+      const answerCoefficient = pick([1, 2, 3]);
+      const top = coefficient * answerCoefficient;
+      const topText = top === 1 ? '' : String(top);
+      const bottomText = coefficient === 1 ? '' : String(coefficient);
+
+      return {
+        html: fraction(
+          `<span class="math">${topText}x${exponentText(numeratorExponent)}</span>`,
+          `<span class="math">${bottomText}x${exponentText(denominatorExponent)}</span>`
+        ),
+      };
+    }
+
+    function powerQuestion() {
+      const innerPower = randInt(2, 4);
+      const outerPower = randInt(2, 3);
+      const divisorPower = randInt(1, 3);
+
+      return {
+        html: fraction(
+          `<span class="math">(x${exponentText(innerPower)})${exponentText(outerPower)}</span>`,
+          `<span class="math">x${exponentText(divisorPower)}</span>`
+        ),
+      };
+    }
+
+    function factorQuestion() {
+      const a = randInt(1, 5);
+      const b = randInt(1, 5);
+      const cancelling = pick([a, b]);
+      const remaining = cancelling === a ? b : a;
+      const quadratic = `x${superscript(2)} + ${(a + b)}x + ${a * b}`;
+
+      return {
+        html: fraction(
+          `<span class="math">${quadratic}</span>`,
+          `<span class="math">(x + ${cancelling})</span>`
+        ),
+      };
+    }
+
+    function differenceOfSquaresQuestion() {
+      const value = randInt(2, 7);
+      return {
+        html: fraction(
+          `<span class="math">x${superscript(2)} - ${value * value}</span>`,
+          `<span class="math">(x - ${value})</span>`
+        ),
+      };
+    }
+
+    function generateQuestion() {
+      const generator = pick([
+        divisionQuestion,
+        powerQuestion,
+        factorQuestion,
+        differenceOfSquaresQuestion,
+      ]);
+
+      questionEl.innerHTML = generator().html;
+    }
+
+    newQuestionBtn.addEventListener('click', generateQuestion);
+    generateQuestion();
+  </script>
+</body>
+</html>
