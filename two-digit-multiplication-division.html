@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2-Digit Speed Practice</title>
+  </head>
+  <body>
+    <div id="question">Loading...</div>
+    <button id="newQuestionBtn" type="button">Generate question</button>
+
+    <script>
+      const questionEl = document.getElementById("question");
+      const newQuestionBtn = document.getElementById("newQuestionBtn");
+
+      function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function generateMultiplication() {
+        const a = randInt(10, 99);
+        const b = randInt(10, 99);
+        return `${a} × ${b}`;
+      }
+
+      function generateDivision() {
+        const divisor = randInt(10, 99);
+        const quotient = randInt(10, 99);
+        const dividend = divisor * quotient;
+        return `${dividend} ÷ ${divisor}`;
+      }
+
+      function generateQuestion() {
+        const isMultiplication = Math.random() < 0.5;
+        questionEl.textContent = isMultiplication
+          ? generateMultiplication()
+          : generateDivision();
+      }
+
+      newQuestionBtn.addEventListener("click", generateQuestion);
+      generateQuestion();
+    </script>
+  </body>
+</html>
